@@ -28,8 +28,7 @@ from cloud.swift.common.utils import clean_metadata, dir_empty, rmdirs, \
 from swift.common.constraints import CONTAINER_LISTING_LIMIT
 from swift.common.utils import normalize_timestamp, TRUE_VALUES
 
-from cloud.swift.common.path_utils import GetPathSize
-
+from cloud.swift.common.path_utils import parent_path,GetPathSize
 
 DATADIR = 'containers'
 
@@ -82,7 +81,7 @@ class DiskDirer(DiskCommon):
         self.gid = int(gid)
         self.db_file = _db_file
         self.dir_exists = os.path.exists(self.datadir)
-       
+        self.fhr_path = parent_path(self.datadir)
        
     def empty(self):
         return dir_empty(self.datadir)
@@ -200,4 +199,22 @@ class DiskDirer(DiskCommon):
         
         return GetPathSize(self.datadir)
 
+    def del_dir(self,dir_path):
+        
+        cmd = 'rm -rf %s' % (dir_path)
+        os.system(cmd)
+        
+    def create_dir_object(self, dir_path):
+        
+        if os.path.exists(dir_path) and not os.path.isdir(dir_path):
+            self.logger.error("Deleting file %s", dir_path)
+            self.del_dir(dir_path)
+       
+        mkdirs(dir_path)
+        os.chown(dir_path, self.uid, self.gid)
+        
+        return True
+    
+    def fhr_dir_is_deleted(self):
+        return not os.path.exists(self.fhr_path)
         
