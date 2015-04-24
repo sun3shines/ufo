@@ -153,6 +153,12 @@ def clean_metadata(path):
                 break
             raise
         key += 1
+        
+def meta_clean_metadata(metapath):
+    
+    with open(metapath,'wb' ) as f:  
+        pickle.dump({} , f)
+        
 
 def check_user_xattr(path):
     if not os.path.exists(path):
@@ -252,6 +258,9 @@ def _update_list(path, cont_path, src_list, reg_file=True, object_count=0,
     obj_path = path.replace(cont_path, '').strip(os.path.sep)
 
     for i in src_list:
+        if i.lower() == 'ff89f933b2ca8df40':
+            continue
+        
         if obj_path:
             obj_list.append(os.path.join(obj_path, i))
         else:
@@ -336,6 +345,7 @@ def _get_account_details_from_fs(acc_path, acc_stats):
     if is_dir:
         for name in do_listdir(acc_path):
             if name.lower() == TEMP_DIR \
+                    or name.lower() == 'ff89f933b2ca8df40'\
                     or name.lower() == ASYNCDIR \
                     or not os.path.isdir(os.path.join(acc_path, name)):
                 continue
@@ -459,6 +469,15 @@ def create_container_metadata(cont_path):
     metadata = get_container_metadata(cont_path)
     return restore_metadata(cont_path, metadata)
 
+def meta_create_container_metadata(cont_path,metapath):
+    metadata = get_container_metadata(cont_path)
+    return restore_metadata(metapath, metadata)
+
 def create_account_metadata(acc_path):
     metadata = get_account_metadata(acc_path)
     return restore_metadata(acc_path, metadata)
+
+def meta_create_account_metadata(acc_path,metapath):
+    
+    metadata = get_account_metadata(acc_path)
+    return meta_restore_metadata(metapath, metadata)
