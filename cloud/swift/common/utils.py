@@ -188,7 +188,7 @@ def validate_container(metadata):
         #logging.warn('validate_container: Metadata missing entries: %s' % metadata)
         return False
 
-    (value, timestamp) = metadata[X_TYPE]
+    value = metadata[X_TYPE]
     if value == CONTAINER:
         return True
 
@@ -209,7 +209,7 @@ def validate_account(metadata):
         #logging.warn('validate_account: Metadata missing entries: %s' % metadata)
         return False
 
-    (value, timestamp) = metadata[X_TYPE]
+    value = metadata[X_TYPE]
     if value == ACCOUNT:
         return True
 
@@ -420,7 +420,8 @@ def get_container_metadata(cont_path):
                 X_PUT_TIMESTAMP: normalize_timestamp(os.path.getmtime(cont_path)),
                 X_OBJECTS_COUNT: object_count,
                 X_BYTES_USED: bytes_used}
-    return _add_timestamp(metadata)
+    # return _add_timestamp(metadata)
+    return metadata
 
 def get_account_metadata(acc_path):
     containers = []
@@ -432,7 +433,8 @@ def get_account_metadata(acc_path):
                 X_OBJECTS_COUNT: 0,
                 X_BYTES_USED: 0,
                 X_CONTAINER_COUNT: container_count}
-    return _add_timestamp(metadata)
+    # return _add_timestamp(metadata)
+    return metadata
 
 def restore_metadata(path, metadata):
     meta_orig = read_metadata(path)
@@ -471,7 +473,7 @@ def create_container_metadata(cont_path):
 
 def meta_create_container_metadata(cont_path,metapath):
     metadata = get_container_metadata(cont_path)
-    return restore_metadata(metapath, metadata)
+    return meta_restore_metadata(metapath, metadata)
 
 def create_account_metadata(acc_path):
     metadata = get_account_metadata(acc_path)

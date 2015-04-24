@@ -23,7 +23,7 @@ from cloud.swift.common.utils import clean_metadata, dir_empty, rmdirs, \
      DEFAULT_UID, validate_object, X_CONTENT_TYPE, X_CONTENT_LENGTH, X_TIMESTAMP, \
      X_PUT_TIMESTAMP, X_TYPE, X_ETAG, X_OBJECTS_COUNT, X_BYTES_USED, \
      X_CONTAINER_COUNT, CONTAINER,meta_write_metadata,meta_read_metadata,\
-     meta_create_object_metadata,meta_create_account_metadata,\
+     meta_create_object_metadata,\
      meta_clean_metadata,meta_create_container_metadata
      
 from cloud.swift.common import Cloudfs 
@@ -137,7 +137,11 @@ class CommonMeta(DiskCommon):
                  uid=DEFAULT_UID, gid=DEFAULT_GID):
         self.root = path
         
-        self.datadir = os.path.join(path, drive)
+        
+        
+        self.container = container
+        
+        self.datadir = path_std(os.path.join(path, drive, self.container))
         
         self.account = account
         assert logger is not None
@@ -153,7 +157,7 @@ class CommonMeta(DiskCommon):
         self.metauuid = 'ff89f933b2ca8df40'
         self.fhr_path = parent_path(self.datadir)
         
-        self.metafile = os.path.join(path, self.metauuid,drive)
+        self.metafile = self.fhr_path+ '/' + self.metauuid+'/' + self.datadir.split('/')[-1]
         self.meta_fhr_path = parent_path(self.metafile) 
             
         if self.meta_fhr_dir_is_deleted():
@@ -161,19 +165,24 @@ class CommonMeta(DiskCommon):
             
         if not os.path.exists(self.datadir):
             return
+  
         if self.dir_exists:
-            self.metadata = meta_read_metadata(self.metafile)    
+            try:
+                self.metadata = meta_read_metadata(self.metafile)
+            except EOFError:
+                meta_create_container_metadata(self.datadir,self.metafile)
         else:
             return
-        
-        if not self.metadata:
-            meta_create_account_metadata(self.datadir,self.metafile)
-            self.metadata = meta_read_metadata(self.metafile)
-        else:
-            if not validate_account(self.metadata):
-                meta_create_account_metadata(self.datadir,self.metafile)
+        if self.container:
+            if not self.metadata:
+                meta_create_container_metadata(self.datadir,self.metafile)
                 self.metadata = meta_read_metadata(self.metafile)
-
+            else:
+                if not validate_container(self.metadata):
+                    meta_create_container_metadata(self.datadir,self.metafile)
+                    self.metadata = meta_read_metadata(self.metafile)
+       
+                    
     def empty(self):
         return dir_empty(self.datadir)
 

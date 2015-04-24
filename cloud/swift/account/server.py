@@ -22,6 +22,7 @@ import cloud.swift.common.constraints
 from swift.account import server
 from cloud.swift.common.DiskDir import DiskAccount
 
+from cloud.swift.common.AccountMeta import AccountMeta
 
 class AccountController(server.AccountController):
     def _get_account_broker(self, drive, part, account):
@@ -35,7 +36,8 @@ class AccountController(server.AccountController):
         :param account: account name
         :returns: DiskDir object
         """
-        return DiskAccount(self.root, drive, account, self.logger)
+        # return DiskAccount(self.root, drive, account, self.logger)
+        return AccountMeta(self.root, drive, account, self.logger)
 
 
 def app_factory(global_conf, **local_conf):

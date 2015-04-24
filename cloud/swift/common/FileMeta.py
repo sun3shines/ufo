@@ -20,7 +20,7 @@ from eventlet import tpool
 from tempfile import mkstemp
 from contextlib import contextmanager
 from swift.common.utils import normalize_timestamp, renamer
-from cloud.swift.common.utils import mkdirs, rmdirs, validate_object, \
+from cloud.swift.common.utils import mkdirs, rmdirs, validate_object, dir_empty, rmdirs,\
      meta_create_object_metadata,  do_open, do_close, do_unlink, do_chown, \
      do_stat, do_listdir, meta_read_metadata, meta_write_metadata
      
@@ -156,6 +156,10 @@ class Gluster_FileMeta(SwiftFile):
         
         return not os.path.exists(self.fhr_path)
     
+    def meta_fhr_dir_is_deleted(self):
+        
+        return not os.path.exists(self.meta_fhr_path)
+    
     def create_dir_object(self, dir_path):
         #TODO: if object already exists???
         if os.path.exists(dir_path) and not os.path.isdir(dir_path):
@@ -261,6 +265,10 @@ class Gluster_FileMeta(SwiftFile):
         if os.path.exists(self.metafile):
             do_unlink(self.metafile)
             
+            if dir_empty(self.meta_fhr_path):
+                rmdirs(self.meta_fhr_path)
+                
+                
     def copy(self,srcfile):
         
         cmd = 'scp -r %s %s' % (srcfile,self.data_file)

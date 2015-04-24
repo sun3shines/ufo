@@ -22,9 +22,11 @@ import cloud.swift.common.constraints
 from swift.obj import server
 from cloud.swift.common.DiskFile import Gluster_DiskFile
 from cloud.swift.common.DiskMeta import Gluster_DiskMeta
-
+from cloud.swift.common.FileMeta import Gluster_FileMeta
 # Monkey patch the object server module to use Gluster's DiskFile definition
-server.DiskFile = Gluster_DiskFile
+# server.DiskFile = Gluster_DiskFile
+
+server.DiskFile = Gluster_FileMeta
 server.DiskMeta = Gluster_DiskMeta
 
 def app_factory(global_conf, **local_conf):

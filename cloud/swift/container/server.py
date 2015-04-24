@@ -21,6 +21,7 @@ import cloud.swift.common.constraints
 
 from swift.container import server
 from cloud.swift.common.DiskDir import DiskDir
+from cloud.swift.common.ContainerMeta import CommonMeta
 
 
 class ContainerController(server.ContainerController):
@@ -36,8 +37,8 @@ class ContainerController(server.ContainerController):
         :param container: container name
         :returns: DiskDir object
         """
-        return DiskDir(self.root, drive, account, container, self.logger)
-
+        # return DiskDir(self.root, drive, account, container, self.logger)
+        return CommonMeta(self.root, drive, account, container, self.logger)
 
 def app_factory(global_conf, **local_conf):
     """paste.deploy app factory for creating WSGI container server apps."""
