@@ -59,8 +59,6 @@ rm -rf %{buildroot}
 mkdir -p      %{buildroot}/%{_confdir}/
 cp -r etc/*   %{buildroot}/%{_confdir}/
 
-mkdir -p                             %{buildroot}/%{_bindir}/
-cp bin/gluster-swift-gen-builders    %{buildroot}/%{_bindir}/
 
 %clean
 rm -rf %{buildroot}
@@ -69,7 +67,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{python_sitelib}/cloud
 %{python_sitelib}/gluster_swift_ufo-%{version}-*.egg-info
-%{_bindir}/gluster-swift-gen-builders
 %dir %{_confdir}
 %config %{_confdir}/account-server/1.conf
 %config %{_confdir}/container-server/1.conf

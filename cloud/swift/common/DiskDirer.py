@@ -143,7 +143,7 @@ class DiskDirer(DiskCommon):
                 if not metadata or not validate_object(metadata):
                     metadata = create_object_metadata(obj_path)
                 if metadata:
-#                    list_item.append(metadata[X_TIMESTAMP])
+                    list_item.append(metadata[X_TIMESTAMP])
                     list_item.append(int(metadata[X_CONTENT_LENGTH]))
 #                    list_item.append(metadata[X_CONTENT_TYPE])
                     list_item.append(metadata[X_ETAG])

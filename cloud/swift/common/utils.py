@@ -221,9 +221,10 @@ def validate_object(metadata):
         logging.warn('validate_object: No metadata')
         return False
 
-#    if X_TIMESTAMP not in metadata.keys() or \ 
 #       X_CONTENT_TYPE not in metadata.keys() or \ 
-    if X_ETAG not in metadata.keys() or \
+
+    if X_TIMESTAMP not in metadata.keys() or \
+       X_ETAG not in metadata.keys() or \
        X_CONTENT_LENGTH not in metadata.keys() or \
        X_TYPE not in metadata.keys():
         
@@ -392,7 +393,7 @@ def get_object_metadata(obj_path):
         is_dir = (stats.st_mode & 0040000) != 0
         metadata = {
             X_TYPE: OBJECT,
-#            X_TIMESTAMP: normalize_timestamp(stats.st_ctime),
+            X_TIMESTAMP: normalize_timestamp(stats.st_ctime),
 #            X_CONTENT_TYPE: DIR_TYPE if is_dir else FILE_TYPE,
 #            X_OBJECT_TYPE: DIR if is_dir else FILE,
             X_CONTENT_LENGTH: 0 if is_dir else stats.st_size,

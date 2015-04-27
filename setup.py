@@ -41,7 +41,7 @@ setup(
         ],
     install_requires=[],  # removed for better compat
     scripts=[
-        'bin/gluster-swift-gen-builders',
+#        'bin/gluster-swift-gen-builders',
     ],
     entry_points={
         'paste.app_factory': [
