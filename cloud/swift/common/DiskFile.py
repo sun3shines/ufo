@@ -250,7 +250,7 @@ class Gluster_DiskFile(SwiftFile):
     def copy(self,srcfile):
         
         cmd = 'scp -r %s %s' % (srcfile,self.data_file)
-        syslog.syslog(syslog.LOG_ERR,'copy: '+str(cmd))
+        
         os.system(cmd)
         
         do_chown(os.path.join(self.datadir, self.obj), self.uid, self.gid)
@@ -258,7 +258,7 @@ class Gluster_DiskFile(SwiftFile):
     def move(self,srcfile):
         
         cmd = 'mv %s %s' % (srcfile,self.data_file)
-        syslog.syslog(syslog.LOG_ERR,'move: '+str(cmd))
+        
         os.system(cmd)
         
         do_chown(os.path.join(self.datadir, self.obj), self.uid, self.gid)

@@ -35,11 +35,11 @@ def GetPathSize(strPath):
   
     nTotalSize = 0;  
     for strRoot, lsDir, lsFiles in os.walk(strPath):  
-        
+        if 'ff89f933b2ca8df40' in strRoot:
+            continue
         for strDir in lsDir:  
             nTotalSize = nTotalSize + GetPathSize(os.path.join(strRoot, strDir));  
   
-         
         for strFile in lsFiles:  
             nTotalSize = nTotalSize + os.path.getsize(os.path.join(strRoot, strFile));  
   

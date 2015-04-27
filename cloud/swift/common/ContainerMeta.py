@@ -309,13 +309,15 @@ class CommonMeta(DiskCommon):
             for obj in objects:
                 list_item = []
                 list_item.append(obj)
+                
                 obj_path = path_std(os.path.join(self.datadir, obj))
                 
-                obj_meta_path = os.path.join('/'.join(obj_path.split('/')[:-1]),self.metauuid,'/'.join(obj_path.split('/')[-1]))
+                obj_meta_path = os.path.join('/'.join(obj_path.split('/')[:-1]),self.metauuid,obj_path.split('/')[-1])
                 
                 metadata = meta_read_metadata(obj_meta_path)
+                
                 if not metadata or not validate_object(metadata):
-                    metadata = meta_create_object_metadata(obj_meta_path)
+                    metadata = meta_create_object_metadata(obj_path,obj_meta_path)
                 if metadata:
 #                    list_item.append(metadata[X_TIMESTAMP])
                     list_item.append(int(metadata[X_CONTENT_LENGTH]))
@@ -401,7 +403,7 @@ class CommonMeta(DiskCommon):
             
             if metadata.has_key('X-Account-Meta-Bytes-Add'):
                 content_length = metadata.get('X-Account-Meta-Bytes-Add')
-                bused, = new_metadata[X_BYTES_USED]
+                bused = new_metadata[X_BYTES_USED]
                 new_metadata[X_BYTES_USED] = int(str(bused)) + int(content_length)
                 
             elif metadata.has_key('X-Account-Meta-Bytes-Del'):

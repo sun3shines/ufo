@@ -303,6 +303,8 @@ def _get_container_details_from_fs(cont_path):
 
     if os.path.isdir(cont_path):
         for (path, dirs, files) in os.walk(cont_path):
+            if 'ff89f933b2ca8df40' in path:
+                continue
             object_count, bytes_used = update_list(path, cont_path, dirs, files,
                                                    object_count, bytes_used,
                                                    obj_list)

@@ -50,8 +50,7 @@ class Ring(ring.Ring):
 
         if not nodes:
             nodes = [self.false_node]
-        import syslog
-        syslog.syslog(syslog.LOG_ERR,'+++++ '+str(self._devs))
+
         return nodes
 
     def get_part_nodes(self, part):
