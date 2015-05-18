@@ -58,6 +58,7 @@ setup(
             'account_quotas = swift.common.middleware.account_quotas:filter_factory',
             'batch = swift.common.middleware.batch:filter_factory',
             'userinit = swift.common.middleware.userinit:filter_factory',
+            'apis = swift.common.middleware.apis:filter_factory',
 
             ],
         },
