@@ -313,7 +313,11 @@ def _get_container_details_from_fs(cont_path):
                                                    obj_list)
 
             dir_list.append((path, do_stat(path).st_mtime))
-
+            
+    obj_list = os.listdir(cont_path)
+    if 'ff89f933b2ca8df40' in obj_list:
+        obj_list.remove('ff89f933b2ca8df40')
+        
     return ContainerDetails(bytes_used, object_count, obj_list, dir_list)
 
 def get_container_details(cont_path):
