@@ -260,62 +260,6 @@ class CommonMeta(DiskCommon):
             rmdirs(self.datadir)
             self.meta_del()
 
-    def list_objects_iter(self, limit, marker, end_marker,
-                          prefix, delimiter, path):
-        """
-        Returns tuple of name, created_at, size, content_type, etag.
-        """
-    
-        if path:
-            prefix = path = path.rstrip('/') + '/'
-            delimiter = '/'
-        if delimiter and not prefix:
-            prefix = ''
-
-        self.update_object_count()
-
-        objects, object_count, bytes_used = self.object_info
-
-        if objects:
-            objects.sort()
-
-        if objects and prefix:
-            objects = self.filter_prefix(objects, prefix)
-
-        if objects and delimiter:
-            objects = self.filter_delimiter(objects, delimiter, prefix)
-
-        if objects and marker:
-            objects = self.filter_marker(objects, marker)
-
-        if objects and end_marker:
-            objects = self.filter_end_marker(objects, end_marker)
-
-        if objects and limit:
-            if len(objects) > limit:
-                objects = self.filter_limit(objects, limit)
-
-        container_list = []
-        if objects:
-            for obj in objects:
-                list_item = []
-                list_item.append(obj)
-                obj_path = path_std(os.path.join(self.datadir, obj))
-                
-                obj_meta_path = os.path.join('/'.join(obj_path.split('/')[:-1]),self.metauuid,obj_path.split('/')[-1])
-                
-                metadata = meta_read_metadata(obj_meta_path)
-                if not metadata or not validate_object(metadata):
-                    metadata = meta_create_object_metadata(obj_path,obj_meta_path)
-                if metadata:
-                    list_item.append(metadata[X_TIMESTAMP])
-                    list_item.append(int(metadata[X_CONTENT_LENGTH]))
-                    list_item.append(metadata[X_ETAG])
-                    list_item.append(metadata[X_FILE_TYPE])
-                container_list.append(list_item)
-
-        return container_list
-
     def update_object_count(self):
         if not self.object_info:
             self.object_info = get_container_details(self.datadir)

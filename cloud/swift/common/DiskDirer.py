@@ -20,7 +20,7 @@ from cloud.swift.common.utils import clean_metadata, dir_empty, rmdirs, \
      mkdirs, validate_account, validate_container, is_marker, do_unlink,\
      get_container_details, get_account_details, get_container_metadata, \
      create_container_metadata, create_account_metadata, DEFAULT_GID, \
-     DEFAULT_UID, validate_object, create_object_metadata, read_metadata, \
+     DEFAULT_UID, validate_object, meta_create_object_metadata, read_metadata, \
      write_metadata, X_CONTENT_TYPE, X_CONTENT_LENGTH, X_TIMESTAMP, X_FILE_TYPE,\
      X_PUT_TIMESTAMP, X_TYPE, X_ETAG, X_OBJECTS_COUNT, X_BYTES_USED, \
      X_CONTAINER_COUNT, CONTAINER,meta_write_metadata,meta_read_metadata
@@ -28,7 +28,7 @@ from cloud.swift.common.utils import clean_metadata, dir_empty, rmdirs, \
 from swift.common.constraints import CONTAINER_LISTING_LIMIT
 from swift.common.utils import normalize_timestamp, TRUE_VALUES
 
-from cloud.swift.common.path_utils import parent_path,GetPathSize
+from cloud.swift.common.path_utils import parent_path,GetPathSize,path_std
 
 DATADIR = 'containers'
 
@@ -47,6 +47,39 @@ else:
 if not os.path.exists(_db_file):
     file(_db_file, 'w+')
 
+
+def get_tree_info(datapath,metauuid):
+    
+    objects = os.listdir(datapath)
+    if 'ff89f933b2ca8df40' in objects:
+        objects.remove('ff89f933b2ca8df40')
+        
+    if objects:
+        objects.sort()
+
+    container_list = []
+    if objects:
+        for obj in objects:
+            list_item = {}
+            
+            obj_path = path_std(os.path.join(datapath, obj))
+            obj_meta_path = os.path.join('/'.join(obj_path.split('/')[:-1]),metauuid,obj_path.split('/')[-1])
+            metadata = meta_read_metadata(obj_meta_path)
+            
+            if not metadata or not validate_object(metadata):
+                metadata = meta_create_object_metadata(obj_path,obj_meta_path)
+                                    
+            if metadata:
+                list_item.update({'name':obj})
+                list_item.append({'modificationTime':str(metadata[X_TIMESTAMP])})
+                list_item.append({'bytes':int(metadata[X_CONTENT_LENGTH])})
+                list_item.append({'md5':metadata[X_ETAG]})
+                list_item.append({'xftype':metadata[X_FILE_TYPE]})
+                
+            container_list.append(list_item)
+
+    return container_list
+    
 class DiskCommon(object):
     
     def is_deleted(self):
@@ -138,31 +171,49 @@ class DiskDirer(DiskCommon):
         self.dir_exists = False
         self.meta_del()
         
-    def list_objects_iter(self):
-        
-        self.update_object_count()
-        objects, object_count, bytes_used = self.object_info
 
+    def non_recursive_iter(self):
+        
+        objects = os.listdir(self.datadir)
+        if 'ff89f933b2ca8df40' in objects:
+            objects.remove('ff89f933b2ca8df40')
+            
         if objects:
             objects.sort()
 
         container_list = []
         if objects:
             for obj in objects:
-                list_item = []
-                list_item.append(obj)
-                obj_path = os.path.join(self.datadir, obj)
-                metadata = read_metadata(obj_path)
+                list_item = {}
+                
+                obj_path = path_std(os.path.join(self.datadir, obj))
+                obj_meta_path = os.path.join('/'.join(obj_path.split('/')[:-1]),self.metauuid,obj_path.split('/')[-1])
+                metadata = meta_read_metadata(obj_meta_path)
+                
                 if not metadata or not validate_object(metadata):
-                    metadata = create_object_metadata(obj_path)
+                    metadata = meta_create_object_metadata(obj_path,obj_meta_path)
+                                        
                 if metadata:
-                    list_item.append(metadata[X_TIMESTAMP])
-                    list_item.append(int(metadata[X_CONTENT_LENGTH]))
-                    list_item.append(metadata[X_ETAG])
-                    list_item.append(metadata[X_FILE_TYPE])
+                    list_item.update({'name':obj})
+                    list_item.append({'modificationTime':str(metadata[X_TIMESTAMP])})
+                    list_item.append({'bytes':int(metadata[X_CONTENT_LENGTH])})
+                    list_item.append({'md5':metadata[X_ETAG]})
+                    list_item.append({'xftype':metadata[X_FILE_TYPE]})
+                    
                 container_list.append(list_item)
 
         return container_list
+    
+    def recursive_iter(self,datapath,metauuid):
+        
+        return get_tree_info(datapath,metauuid)
+    
+    def list_objects_iter(self,recursive='false'):
+        
+        if recursive == 'true':
+            return self.recursive_iter(self.datadir,self.metauuid)
+        else:
+            return self.non_recursive_iter()
 
     def list_objects_meta_iter(self):
         

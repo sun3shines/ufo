@@ -145,33 +145,6 @@ class DirMeta(DiskCommon):
         cmd = 'rm -rf %s' % (dir_path)
         os.system(cmd)
         
-    def list_objects_iter(self):
-        
-        self.update_object_count()
-        objects, object_count, bytes_used = self.object_info
-
-        if objects:
-            objects.sort()
-
-        container_list = []
-        if objects:
-            for obj in objects:
-                list_item = []
-                list_item.append(obj)
-                obj_path = os.path.join(self.datadir, obj)
-                metadata = read_metadata(obj_path)
-                if not metadata or not validate_object(metadata):
-                    metadata = create_object_metadata(obj_path)
-                if metadata:
-                    list_item.append(metadata[X_TIMESTAMP])
-                    list_item.append(int(metadata[X_CONTENT_LENGTH]))
-                    list_item.append(metadata[X_ETAG])
-                    list_item.append(metadata[X_FILE_TYPE])
-                    
-                container_list.append(list_item)
-
-        return container_list
-
     def list_objects_meta_iter(self):
         
         self.update_object_count()
