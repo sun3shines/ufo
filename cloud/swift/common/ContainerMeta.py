@@ -51,6 +51,38 @@ else:
 if not os.path.exists(_db_file):
     file(_db_file, 'w+')
 
+def get_tree_info(datapath,metauuid):
+    
+    objects = os.listdir(datapath)
+    container_list = []
+    
+    for obj in objects:
+        if 'ff89f933b2ca8df40' == obj:
+            continue
+        
+        list_item = {}
+            
+        obj_path = path_std(os.path.join(datapath, obj))
+        obj_meta_path = os.path.join('/'.join(obj_path.split('/')[:-1]),metauuid,obj_path.split('/')[-1])
+        metadata = meta_read_metadata(obj_meta_path)
+        
+        if not metadata or not validate_object(metadata):
+            metadata = meta_create_object_metadata(obj_path,obj_meta_path)
+                                
+        if metadata:
+            list_item.update({'name':obj})
+            list_item.update({'modificationTime':str(metadata[X_TIMESTAMP])})
+            list_item.update({'bytes':int(metadata[X_CONTENT_LENGTH])})
+            list_item.update({'md5':metadata[X_ETAG]})
+            list_item.update({'ftype':metadata[X_FILE_TYPE]})
+                
+        if os.path.isdir(obj_path):
+            cList = get_tree_info(obj_path,metauuid)
+            list_item.update({'list':cList})
+        container_list.append(list_item)
+            
+    return container_list
+
 class DiskCommon(object):
     def is_deleted(self):
         return not os.path.exists(self.datadir)
@@ -321,7 +353,7 @@ class CommonMeta(DiskCommon):
                     list_item.update({'modificationTime':str(metadata[X_TIMESTAMP])})
                     list_item.update({'bytes':int(metadata[X_CONTENT_LENGTH])})
                     list_item.update({'md5':metadata[X_ETAG]})
-                    list_item.update({'xftype':metadata[X_FILE_TYPE]})
+                    list_item.update({'ftype':metadata[X_FILE_TYPE]})
                     
                 container_list.append(list_item)
 
@@ -330,6 +362,17 @@ class CommonMeta(DiskCommon):
     def list_objects_iter(self,recursive='false'):
 
 
+        if recursive == 'true':
+            return self.recursive_iter(self.datadir,self.metauuid)
+        else:
+            return self.non_recursive_iter()
+        
+    def recursive_iter(self,datapath,metauuid):
+        
+        return get_tree_info(datapath,metauuid)
+    
+    def non_recursive_iter(self):
+        
         objects = os.listdir(self.datadir)
         if 'ff89f933b2ca8df40' in objects:
             objects.remove('ff89f933b2ca8df40')
@@ -353,7 +396,7 @@ class CommonMeta(DiskCommon):
                     list_item.update({'modificationTime':str(metadata[X_TIMESTAMP])})
                     list_item.update({'bytes':int(metadata[X_CONTENT_LENGTH])})
                     list_item.update({'md5':metadata[X_ETAG]})
-                    list_item.update({'xftype':metadata[X_FILE_TYPE]})
+                    list_item.update({'ftype':metadata[X_FILE_TYPE]})
                     
                 container_list.append(list_item)
 
