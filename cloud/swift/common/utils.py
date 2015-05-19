@@ -28,6 +28,7 @@ X_CONTENT_LENGTH = 'Content-Length'
 X_TIMESTAMP = 'X-Timestamp'
 X_PUT_TIMESTAMP = 'X-PUT-Timestamp'
 X_TYPE = 'X-Type'
+X_FILE_TYPE = 'X-File-Type'
 X_ETAG = 'ETag'
 X_OBJECTS_COUNT = 'X-Object-Count'
 X_BYTES_USED = 'X-Bytes-Used'
@@ -226,6 +227,7 @@ def validate_object(metadata):
     if X_TIMESTAMP not in metadata.keys() or \
        X_ETAG not in metadata.keys() or \
        X_CONTENT_LENGTH not in metadata.keys() or \
+       X_FILE_TYPE not in metadata.keys() or \
        X_TYPE not in metadata.keys():
         
 #       X_TYPE not in metadata.keys() or \
@@ -398,6 +400,7 @@ def get_object_metadata(obj_path):
 #            X_OBJECT_TYPE: DIR if is_dir else FILE,
             X_CONTENT_LENGTH: 0 if is_dir else stats.st_size,
             X_ETAG: md5().hexdigest() if is_dir else _get_etag(obj_path),
+            X_FILE_TYPE:'d' if is_dir else 'f',
             }
     return metadata
 

@@ -17,11 +17,11 @@ import os, errno
 import syslog
 
 from cloud.swift.common.utils import clean_metadata, dir_empty, rmdirs, \
-     mkdirs, validate_account, validate_container, is_marker, \
+     mkdirs, validate_account, validate_container, is_marker, do_unlink,\
      get_container_details, get_account_details, get_container_metadata, \
      create_container_metadata, create_account_metadata, DEFAULT_GID, \
      DEFAULT_UID, validate_object, create_object_metadata, read_metadata, \
-     write_metadata, X_CONTENT_TYPE, X_CONTENT_LENGTH, X_TIMESTAMP, \
+     write_metadata, X_CONTENT_TYPE, X_CONTENT_LENGTH, X_TIMESTAMP, X_FILE_TYPE,\
      X_PUT_TIMESTAMP, X_TYPE, X_ETAG, X_OBJECTS_COUNT, X_BYTES_USED, \
      X_CONTAINER_COUNT, CONTAINER,meta_write_metadata,meta_read_metadata
      
@@ -83,6 +83,18 @@ class DiskDirer(DiskCommon):
         self.dir_exists = os.path.exists(self.datadir)
         self.fhr_path = parent_path(self.datadir)
        
+        self.metauuid = 'ff89f933b2ca8df40'
+        self.metafile = self.fhr_path+ '/' + self.metauuid+'/' + self.datadir.split('/')[-1]
+        
+        self.meta_fhr_path = parent_path(self.metafile) 
+            
+        if self.meta_fhr_dir_is_deleted():
+            self.create_dir_object(self.meta_fhr_path)
+            
+    def meta_fhr_dir_is_deleted(self):
+        
+        return not os.path.exists(self.meta_fhr_path)
+    
     def empty(self):
         return dir_empty(self.datadir)
 
@@ -124,7 +136,8 @@ class DiskDirer(DiskCommon):
         cmd = 'rm -rf %s' % (self.datadir)
         os.system(cmd)
         self.dir_exists = False
-
+        self.meta_del()
+        
     def list_objects_iter(self):
         
         self.update_object_count()
@@ -145,8 +158,8 @@ class DiskDirer(DiskCommon):
                 if metadata:
                     list_item.append(metadata[X_TIMESTAMP])
                     list_item.append(int(metadata[X_CONTENT_LENGTH]))
-#                    list_item.append(metadata[X_CONTENT_TYPE])
                     list_item.append(metadata[X_ETAG])
+                    list_item.append(metadata[X_FILE_TYPE])
                 container_list.append(list_item)
 
         return container_list
@@ -167,8 +180,10 @@ class DiskDirer(DiskCommon):
                 obj_path = os.path.join(self.datadir, obj)
                 metadata = meta_read_metadata(obj_path)
                 if metadata:
+                    list_item.append(metadata[X_TIMESTAMP])
                     list_item.append(int(metadata[X_CONTENT_LENGTH]))
                     list_item.append(metadata[X_ETAG])
+                    list_item.append(metadata[X_FILE_TYPE])
                     if 'recycle' == self.container:
                         list_item.append(metadata['user_path'])
                         list_item.append(metadata['recycle_uuid'])
@@ -217,4 +232,12 @@ class DiskDirer(DiskCommon):
     
     def fhr_dir_is_deleted(self):
         return not os.path.exists(self.fhr_path)
+     
+    def meta_del(self):
         
+        if os.path.exists(self.metafile):
+            do_unlink(self.metafile)
+            
+            if dir_empty(self.meta_fhr_path):
+                rmdirs(self.meta_fhr_path)
+                   

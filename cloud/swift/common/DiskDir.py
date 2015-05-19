@@ -21,7 +21,7 @@ from cloud.swift.common.utils import clean_metadata, dir_empty, rmdirs, \
      get_container_details, get_account_details, get_container_metadata, \
      create_container_metadata, create_account_metadata, DEFAULT_GID, \
      DEFAULT_UID, validate_object, create_object_metadata, read_metadata, \
-     write_metadata, X_CONTENT_TYPE, X_CONTENT_LENGTH, X_TIMESTAMP, \
+     write_metadata, X_CONTENT_TYPE, X_CONTENT_LENGTH, X_TIMESTAMP,X_FILE_TYPE, \
      X_PUT_TIMESTAMP, X_TYPE, X_ETAG, X_OBJECTS_COUNT, X_BYTES_USED, \
      X_CONTAINER_COUNT, CONTAINER
 from cloud.swift.common import Cloudfs 
@@ -318,8 +318,8 @@ class DiskDir(DiskCommon):
                 if metadata:
                     list_item.append(metadata[X_TIMESTAMP])
                     list_item.append(int(metadata[X_CONTENT_LENGTH]))
-#                    list_item.append(metadata[X_CONTENT_TYPE])
                     list_item.append(metadata[X_ETAG])
+                    list_item.append(metadata[X_FILE_TYPE])
                 container_list.append(list_item)
 
         return container_list

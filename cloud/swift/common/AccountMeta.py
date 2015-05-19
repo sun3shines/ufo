@@ -21,7 +21,7 @@ from cloud.swift.common.utils import clean_metadata, dir_empty, rmdirs, \
      get_container_details, get_account_details, get_container_metadata, \
      DEFAULT_GID, \
      DEFAULT_UID, validate_object, X_CONTENT_TYPE, X_CONTENT_LENGTH, X_TIMESTAMP, \
-     X_PUT_TIMESTAMP, X_TYPE, X_ETAG, X_OBJECTS_COUNT, X_BYTES_USED, \
+     X_PUT_TIMESTAMP, X_TYPE, X_ETAG, X_OBJECTS_COUNT, X_BYTES_USED, X_FILE_TYPE,\
      X_CONTAINER_COUNT, CONTAINER,meta_write_metadata,meta_read_metadata,\
      meta_create_object_metadata,meta_create_account_metadata,\
      meta_clean_metadata,meta_create_container_metadata
@@ -310,8 +310,8 @@ class CommonMeta(DiskCommon):
                 if metadata:
                     list_item.append(metadata[X_TIMESTAMP])
                     list_item.append(int(metadata[X_CONTENT_LENGTH]))
-#                    list_item.append(metadata[X_CONTENT_TYPE])
                     list_item.append(metadata[X_ETAG])
+                    list_item.append(metadata[X_FILE_TYPE])
                 container_list.append(list_item)
 
         return container_list

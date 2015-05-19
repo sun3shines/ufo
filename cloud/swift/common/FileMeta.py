@@ -25,7 +25,7 @@ from cloud.swift.common.utils import mkdirs, rmdirs, validate_object, dir_empty,
      do_stat, do_listdir, meta_read_metadata, meta_write_metadata
      
 from cloud.swift.common.utils import X_CONTENT_TYPE, X_CONTENT_LENGTH, \
-     X_TIMESTAMP, X_PUT_TIMESTAMP, X_TYPE, X_ETAG, X_OBJECTS_COUNT, \
+     X_TIMESTAMP, X_PUT_TIMESTAMP, X_TYPE, X_ETAG, X_OBJECTS_COUNT, X_FILE_TYPE,\
      X_BYTES_USED, X_OBJECT_TYPE, FILE, DIR, MARKER_DIR, OBJECT, DIR_TYPE, \
      FILE_TYPE, DEFAULT_UID, DEFAULT_GID
 
