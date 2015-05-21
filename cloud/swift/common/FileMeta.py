@@ -260,6 +260,35 @@ class Gluster_FileMeta(SwiftFile):
         self.metadata = {}
         self.data_file = None
 
+    def unlink_data(self):
+        """
+        Remove the file.
+        """
+        
+        if self.is_dir:
+            rmdirs(os.path.join(self.datadir, self.obj))
+            if not os.path.isdir(os.path.join(self.datadir, self.obj)):
+                self.metadata = {}
+                self.data_file = None
+            else:
+                logging.error('Unable to delete dir %s' % os.path.join(self.datadir, self.obj))
+            return
+
+        for fname in do_listdir(self.datadir):
+            if fname == self.obj:
+                try:
+                    do_unlink(os.path.join(self.datadir, fname))
+                    self.meta_data_del()
+                except OSError, err:
+                    if err.errno != errno.ENOENT:
+                        raise
+        self.metadata = {}
+        
+    def meta_data_del(self):
+        
+        if os.path.exists(self.metafile):
+            do_unlink(self.metafile)
+                
     def meta_del(self):
         
         if os.path.exists(self.metafile):
