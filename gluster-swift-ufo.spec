@@ -74,3 +74,6 @@ rm -rf %{buildroot}
 %config %{_confdir}/swift.conf
 %config %{_confdir}/proxy-server.conf
 %config %{_confdir}/fs.conf
+%config %{_confdir}/server.key
+%config %{_confdir}/server.crt
+%config %{_confdir}/ca.crt
