@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import subprocess
 import os
 import syslog
 import os.path
@@ -263,17 +264,23 @@ class Gluster_DiskMeta(SwiftFile):
 
     def copy(self,srcfile):
         
-        cmd = 'scp -r %s %s' % (srcfile,self.data_file)
+        # cmd = 'scp -r %s %s' % (srcfile,self.data_file)
+        # os.system(cmd)
         
-        os.system(cmd)
+        cmd = ['scp','-r',srcfile,self.data_file]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
         
         do_chown(os.path.join(self.datadir, self.obj), self.uid, self.gid)
         
     def move(self,srcfile):
         
-        cmd = 'mv %s %s' % (srcfile,self.data_file)
+        # cmd = 'mv %s %s' % (srcfile,self.data_file)
+        # os.system(cmd)
         
-        os.system(cmd)
+        cmd = ['mv',srcfile,self.data_file]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
         
         do_chown(os.path.join(self.datadir, self.obj), self.uid, self.gid)
          

@@ -34,6 +34,7 @@ from swift.obj.server import SwiftFile
 
 from cloud.swift.common.path_utils import parent_path,path_std
 
+import subprocess
 
 DATADIR = 'objects'
 ASYNCDIR = 'async_pending'
@@ -300,17 +301,23 @@ class Gluster_FileMeta(SwiftFile):
                 
     def copy(self,srcfile):
         
-        cmd = 'scp -r %s %s' % (srcfile,self.data_file)
-      
-        os.system(cmd)
+        # cmd = 'scp -r %s %s' % (srcfile,self.data_file)
+        # os.system(cmd)
+        
+        cmd = ['scp','-r',srcfile,self.data_file]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
         
         do_chown(os.path.join(self.datadir, self.obj), self.uid, self.gid)
         
     def move(self,srcfile):
         
-        cmd = 'mv %s %s' % (srcfile,self.data_file)
-     
-        os.system(cmd)
+        # cmd = 'mv %s %s' % (srcfile,self.data_file)
+        # os.system(cmd)
+        
+        cmd = ['mv',srcfile,self.data_file]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
         
         do_chown(os.path.join(self.datadir, self.obj), self.uid, self.gid)
          

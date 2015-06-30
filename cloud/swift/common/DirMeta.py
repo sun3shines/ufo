@@ -15,7 +15,7 @@
 
 import os, errno
 import syslog
-
+import subprocess
 from cloud.swift.common.utils import clean_metadata, dir_empty, rmdirs, \
      mkdirs, do_unlink,validate_account, validate_container, is_marker, \
      get_container_details, get_account_details, get_container_metadata, \
@@ -115,8 +115,12 @@ class DirMeta(DiskCommon):
 
     def move(self,srcdir):
         
-        cmd = 'mv %s %s' % (srcdir,self.datadir)
-        os.system(cmd)
+        # cmd = 'mv %s %s' % (srcdir,self.datadir)
+        # os.system(cmd)
+        
+        cmd = ['mv',srcdir,self.datadir]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
         
         os.chown(self.datadir, self.uid, self.gid)
         self.dir_exists = True
@@ -124,8 +128,12 @@ class DirMeta(DiskCommon):
 
     def copy(self,srcdir):
         
-        cmd = 'cp -rf %s %s' % (srcdir,self.datadir)
-        os.system(cmd)
+        # cmd = 'cp -rf %s %s' % (srcdir,self.datadir)
+        # os.system(cmd)
+        
+        cmd = ['cp','-rf',srcdir,self.datadir]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
         
         os.chown(self.datadir, self.uid, self.gid)
         self.dir_exists = True
@@ -134,16 +142,20 @@ class DirMeta(DiskCommon):
         """
         Remove directory/container if empty.
         """
-        # if dir_empty(self.datadir):
         
-        #     rmdirs(self.datadir)
-        cmd = 'rm -rf %s' % (self.datadir)
-        os.system(cmd)
+        cmd = ['rm','-rf',self.datadir]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
+
 
     def del_dir(self,dir_path):
         
-        cmd = 'rm -rf %s' % (dir_path)
-        os.system(cmd)
+        # cmd = 'rm -rf %s' % (dir_path)
+        # os.system(cmd)
+        
+        cmd = ['rm','-rf',dir_path]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
         
     def list_objects_meta_iter(self):
         

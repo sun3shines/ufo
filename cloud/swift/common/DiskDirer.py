@@ -15,7 +15,7 @@
 
 import os, errno
 import syslog
-
+import subprocess
 from cloud.swift.common.utils import clean_metadata, dir_empty, rmdirs, \
      mkdirs, validate_account, validate_container, is_marker, do_unlink,\
      get_container_details, get_account_details, get_container_metadata, \
@@ -144,8 +144,13 @@ class DiskDirer(DiskCommon):
 
     def move(self,srcdir):
         
-        cmd = 'mv %s %s' % (srcdir,self.datadir)
-        os.system(cmd)
+        # cmd = 'mv %s %s' % (srcdir,self.datadir)
+        # os.system(cmd)
+        
+        cmd = ['mv',srcdir,self.datadir]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
+        
         
         os.chown(self.datadir, self.uid, self.gid)
         self.dir_exists = True
@@ -153,8 +158,12 @@ class DiskDirer(DiskCommon):
 
     def copy(self,srcdir):
         
-        cmd = 'cp -rf %s %s' % (srcdir,self.datadir)
-        os.system(cmd)
+        # cmd = 'cp -rf %s %s' % (srcdir,self.datadir)
+        # os.system(cmd)
+        
+        cmd = ['cp','-rf',srcdir,self.datadir]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
         
         os.chown(self.datadir, self.uid, self.gid)
         self.dir_exists = True
@@ -166,8 +175,13 @@ class DiskDirer(DiskCommon):
         # if dir_empty(self.datadir):
         
         #     rmdirs(self.datadir)
-        cmd = 'rm -rf %s' % (self.datadir)
-        os.system(cmd)
+        # cmd = 'rm -rf %s' % (self.datadir)
+        # os.system(cmd)
+        
+        cmd = ['rm','-rf',self.datadir]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
+        
         self.dir_exists = False
         self.meta_del()
         
@@ -258,8 +272,12 @@ class DiskDirer(DiskCommon):
 
     def reset_db(self):
         
-        cmd = 'rm -rf %s/*' % (self.datadir)
-        os.system(cmd)
+        # cmd = 'rm -rf %s/*' % (self.datadir)
+        # os.system(cmd)
+        
+        cmd = ['rm','-rf','%s/*' % (self.datadir)]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
         
     def get_data_dir_size(self):
         
@@ -267,8 +285,12 @@ class DiskDirer(DiskCommon):
 
     def del_dir(self,dir_path):
         
-        cmd = 'rm -rf %s' % (dir_path)
-        os.system(cmd)
+        # cmd = 'rm -rf %s' % (dir_path)
+        # os.system(cmd)
+        
+        cmd = ['rm','-rf',dir_path]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
         
     def create_dir_object(self, dir_path):
         

@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import subprocess
 import os
 import os.path
 from eventlet import tpool
@@ -43,8 +44,12 @@ class Gluster_DiskLink(DiskLink):
 
     def link(self,src_file):
         
-        cmd = 'ln -s %s %s' % (src_file,self.data_file)
-        os.system(cmd)
+        # cmd = 'ln -s %s %s' % (src_file,self.data_file)
+        # os.system(cmd)
+        
+        cmd = ['ln','-s',src_file,self.data_file]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
         
         return True
 
