@@ -275,7 +275,11 @@ class DiskDirer(DiskCommon):
         # cmd = 'rm -rf %s/*' % (self.datadir)
         # os.system(cmd)
         
-        cmd = ['rm','-rf','%s/*' % (self.datadir)]
+        cmd = ['rm','-rf','%s/' % (self.datadir)]
+        ps = subprocess.Popen(cmd)
+        ps.wait()
+        
+        cmd = ['mkdir',self.datadir]
         ps = subprocess.Popen(cmd)
         ps.wait()
         
