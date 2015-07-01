@@ -72,6 +72,8 @@ def get_tree_info(datapath,metauuid):
             list_item.update({'bytes':int(metadata[X_CONTENT_LENGTH])})
             list_item.update({'md5':metadata[X_ETAG]})
             list_item.update({'ftype':metadata[X_FILE_TYPE]})
+            if metadata.get('metadata'):
+                list_item.update({'metadata':metadata['metadata']})
                 
         if os.path.isdir(obj_path):
             cList = get_tree_info(obj_path,metauuid)
@@ -213,7 +215,9 @@ class DiskDirer(DiskCommon):
                     list_item.update({'bytes':int(metadata[X_CONTENT_LENGTH])})
                     list_item.update({'md5':metadata[X_ETAG]})
                     list_item.update({'ftype':metadata[X_FILE_TYPE]})
-                    
+                    if metadata.has_key('metadata'):
+                        list_item.update({'metadata':metadata['metadata']})
+                
                 container_list.append(list_item)
 
         return container_list

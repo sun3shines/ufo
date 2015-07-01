@@ -18,7 +18,7 @@ from webob.exc import HTTPBadRequest
 import swift.common.constraints
 import swift.common.ring as _ring
 from cloud.swift.common import Cloudfs, ring
-
+from swift.common.bufferedhttp import jresponse
 
 MAX_OBJECT_NAME_COMPONENT_LENGTH = swift.common.constraints.constraints_conf_int(
         'max_object_name_component_length', 255)
@@ -57,9 +57,9 @@ def gluster_check_object_creation(req, object_name):
             if reason:
                 bdy = 'Invalid object name "%s", component "%s" %s' \
                         % (object_name, obj, reason)
-                ret = HTTPBadRequest(body=bdy,
-                                     request=req,
-                                     content_type='text/plain')
+                ret = jresponse('-1',bdy,req,400)
+                
+                
 
     return ret
 
