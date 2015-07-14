@@ -157,7 +157,7 @@ class DirMeta(DiskCommon):
         ps = subprocess.Popen(cmd)
         ps.wait()
         
-    def list_objects_meta_iter(self):
+    def list_objects_meta_iter(self,start,limit):
         
         self.update_object_count()
         objects, object_count, bytes_used = self.object_info
@@ -183,6 +183,18 @@ class DirMeta(DiskCommon):
                         list_item.append(metadata['ftype'])
                 container_list.append(list_item)
 
+        if 'recycle' == self.container:
+            container_list.sort(key=lambda x:float(x[1]))
+            container_list.reverse()
+            
+            if start:
+                start = int(start)
+                if limit:
+                    limit = int(limit)
+                    return container_list[start:start+limit]
+                else:
+                    return container_list[start:]
+                
         return container_list
     
     def update_object_count(self):
