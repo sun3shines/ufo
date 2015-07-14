@@ -84,6 +84,8 @@ class Gluster_DiskFile(SwiftFile):
         
         self.device_path = os.path.join(path, device)
         self.container_path = os.path.join(path, device, container)
+        self.cntpath = os.path.join(path, device, container)
+        
         self.tmpdir = os.path.join(path, device, 'tmp')
         self.logger = logger
         self.metadata = {}
@@ -101,6 +103,10 @@ class Gluster_DiskFile(SwiftFile):
         
         self.data_file = os.path.join(self.datadir, self.obj)
         self.fhr_path = parent_path(self.data_file)
+        
+        self.cnt_flag = self.cnt_exists()
+        if not self.cnt_flag:
+            return
         
         if not os.path.exists(self.datadir + '/' + self.obj):
             return
@@ -147,6 +153,10 @@ class Gluster_DiskFile(SwiftFile):
     def fhr_dir_is_deleted(self):
         
         return not os.path.exists(self.fhr_path)
+    
+    def cnt_exists(self):
+        
+        return os.path.exists(self.cntpath)
     
     def create_dir_object(self, dir_path):
         #TODO: if object already exists???

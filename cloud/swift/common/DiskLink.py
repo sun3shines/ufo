@@ -37,11 +37,20 @@ class Gluster_DiskLink(DiskLink):
     def __init__(self, path, device, partition, account, container, link):
         
         self.data_file = os.path.join(path,device,container,link)
+        self.cntpath =  os.path.join(path,device,container)
+        
+        self.cnt_flag = self.cnt_exists()
+        if not self.cnt_flag:
+            return
         
     def is_deleted(self):
 
         return not os.path.exists(self.data_file)
 
+    def cnt_exists(self):
+        
+        return os.path.exists(self.cntpath)
+    
     def link(self,src_file):
         
         # cmd = 'ln -s %s %s' % (src_file,self.data_file)

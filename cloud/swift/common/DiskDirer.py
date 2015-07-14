@@ -105,6 +105,7 @@ class DiskDirer(DiskCommon):
         self.root = path
         self.container = container
         self.datadir = os.path.join(path, drive,container,direr)
+        self.cntpath = os.path.join(path, drive,container)
         
         self.account = account
         assert logger is not None
@@ -117,12 +118,16 @@ class DiskDirer(DiskCommon):
         self.db_file = _db_file
         self.dir_exists = os.path.exists(self.datadir)
         self.fhr_path = parent_path(self.datadir)
-       
+            
         self.metauuid = 'ff89f933b2ca8df40'
         self.metafile = self.fhr_path+ '/' + self.metauuid+'/' + self.datadir.split('/')[-1]
         
         self.meta_fhr_path = parent_path(self.metafile) 
             
+        self.cnt_flag = self.cnt_exists()
+        if not self.cnt_flag:
+            return
+        
         if self.meta_fhr_dir_is_deleted():
             self.create_dir_object(self.meta_fhr_path)
             
@@ -144,6 +149,10 @@ class DiskDirer(DiskCommon):
         os.chown(self.datadir, self.uid, self.gid)
         self.dir_exists = True
 
+    def cnt_exists(self):
+        
+        return os.path.exists(self.cntpath)
+    
     def move(self,srcdir):
         
         # cmd = 'mv %s %s' % (srcdir,self.datadir)

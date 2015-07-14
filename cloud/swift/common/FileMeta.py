@@ -84,6 +84,8 @@ class Gluster_FileMeta(SwiftFile):
         
         self.device_path = os.path.join(path, device)
         self.container_path = os.path.join(path, device, container)
+        self.cntpath = os.path.join(path, device, container)
+        
         self.tmpdir = os.path.join(path, device, 'tmp')
         self.logger = logger
         self.metadata = {}
@@ -108,6 +110,10 @@ class Gluster_FileMeta(SwiftFile):
         
         self.meta_fhr_path = parent_path(self.metafile) 
             
+        self.cnt_flag = self.cnt_exists()
+        if not self.cnt_flag:
+            return
+        
         if self.meta_fhr_dir_is_deleted():
             self.create_dir_object(self.meta_fhr_path)
             
@@ -149,6 +155,10 @@ class Gluster_FileMeta(SwiftFile):
             do_close(self.fp)
             self.fp = None
 
+    def cnt_exists(self):
+        
+        return os.path.exists(self.cntpath)
+    
     def is_deleted(self):
         
         return not os.path.exists(self.data_file)
