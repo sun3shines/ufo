@@ -92,8 +92,12 @@ class DirMeta(DiskCommon):
             self.meta_fhr_path = parent_path(self.metafile) 
             
         if self.meta_fhr_dir_is_deleted():
-            self.create_dir_object(self.meta_fhr_path)
-            
+            # self.create_dir_object(self.meta_fhr_path)
+            self.tmp_meta_fhr_path = self.meta_fhr_path
+            while not os.path.exists(self.tmp_meta_fhr_path):
+                self.create_dir_object(self.tmp_meta_fhr_path)
+                self.tmp_meta_fhr_path = parent_path(parent_path(self.tmp_meta_fhr_path)) + '/' +self.metauuid
+                
         if not os.path.exists(self.datadir):
             return
                   
