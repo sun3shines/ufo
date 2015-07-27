@@ -175,6 +175,32 @@ class Gluster_DiskFile(SwiftFile):
         write_metadata(obj_path, metadata)
         self.metadata = metadata
 
+    def copy_put(self, fd, tmppath):
+        
+        tpool.execute(os.fsync, fd)
+        
+        if self.obj_path:
+            dir_objs = self.obj_path.split('/')
+            tmp_path = ''
+            if len(dir_objs):
+                for dir_name in dir_objs:
+                    if tmp_path:
+                        tmp_path = tmp_path + '/' + dir_name
+                    else:
+                        tmp_path = dir_name
+                    if not self.create_dir_object(os.path.join(self.container_path,
+                            tmp_path)):
+                        self.logger.error("Failed in subdir %s",\
+                                        os.path.join(self.container_path,tmp_path))
+                        return False
+
+        renamer(tmppath, os.path.join(self.datadir,
+                                      self.obj))
+        
+        do_chown(os.path.join(self.datadir, self.obj), self.uid, self.gid)
+        
+        return True
+    
     def put(self, fd, tmppath, metadata,extension=''):
         
         if extension == '.ts':
