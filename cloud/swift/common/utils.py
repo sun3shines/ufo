@@ -22,6 +22,7 @@ import cPickle as pickle
 from ConfigParser import ConfigParser, NoSectionError, NoOptionError
 from swift.common.utils import normalize_timestamp, TRUE_VALUES
 from cloud.swift.common.fs_utils import *
+from cloud.swift.common.path_utils import parent_path
 
 X_CONTENT_TYPE = 'Content-Type'
 X_CONTENT_LENGTH = 'Content-Length'
@@ -110,6 +111,9 @@ def read_metadata(path):
 def meta_write_metadata(metapath, metadata):
     
     assert isinstance(metadata, dict)
+    
+    if not os.path.exists(parent_path(metapath)):
+        mkdirs(parent_path(metapath))
     
     with open(metapath,'wb' ) as f:  
         pickle.dump(metadata , f )
