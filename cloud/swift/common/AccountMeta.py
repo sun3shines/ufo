@@ -319,8 +319,11 @@ class CommonMeta(DiskCommon):
         Create the container if it doesn't exist and update the timestamp
         """
         if not os.path.exists(self.datadir):
+#            print '00000000000000000000000016' + '  ' +self.datadir
             self.put(self.metadata)
-
+#        else:
+#            print '00000000000000000000000018' + '  ' +self.datadir
+            
     def delete_db(self, timestamp):
         """
         Delete the container

@@ -210,8 +210,10 @@ class DirMeta(DiskCommon):
         Create the container if it doesn't exist and update the timestamp
         """
         if not os.path.exists(self.datadir):
+#            print '00000000000000000000000026' + '  ' +self.datadir
             self.put()
-
+#        else:
+#            print '00000000000000000000000028' + '  ' +self.datadir
     def delete_db(self):
         """
         Delete the container

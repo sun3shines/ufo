@@ -275,7 +275,7 @@ class Gluster_DiskMeta(SwiftFile):
             rmdirs(os.path.join(self.datadir, self.obj))
             if not os.path.isdir(os.path.join(self.datadir, self.obj)):
                 self.metadata = {}
-                self.data_file = None
+#                self.data_file = None
             else:
                 logging.error('Unable to delete dir %s' % os.path.join(self.datadir, self.obj))
             return
@@ -290,7 +290,7 @@ class Gluster_DiskMeta(SwiftFile):
 
         do_unlink(self.metafile)
         self.metadata = {}
-        self.data_file = None
+#        self.data_file = None
 
     def copy(self,srcfile):
         
@@ -309,6 +309,7 @@ class Gluster_DiskMeta(SwiftFile):
         # os.system(cmd)
         
         cmd = ['mv',srcfile,self.data_file]
+        print 'move cmd:  '+str(cmd)
         ps = subprocess.Popen(cmd)
         ps.wait()
         

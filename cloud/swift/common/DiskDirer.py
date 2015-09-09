@@ -293,8 +293,11 @@ class DiskDirer(DiskCommon):
     def update_put_timestamp(self):
         
         if not os.path.exists(self.datadir):
+#            print '00000000000000000000000046' + '  ' +self.datadir
             self.put()
-
+#        else:
+#            print '00000000000000000000000048' + '  ' +self.datadir
+            
     def delete_db(self):
         
         self.unlink()

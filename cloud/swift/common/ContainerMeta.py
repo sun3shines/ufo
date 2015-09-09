@@ -244,7 +244,9 @@ class CommonMeta(DiskCommon):
         Create and write metatdata to directory/container.
         :param metadata: Metadata to write.
         """
+#        print 'ContainerMeta   '+self.datadir
         if not self.dir_exists:
+#            print '00000000000000000000000007' + '  ' +self.datadir
             mkdirs(self.datadir)
 
         os.chown(self.datadir, self.uid, self.gid)
@@ -470,8 +472,10 @@ class CommonMeta(DiskCommon):
         Create the container if it doesn't exist and update the timestamp
         """
         if not os.path.exists(self.datadir):
+#            print '00000000000000000000000006' + '  ' +self.datadir
             self.put(self.metadata)
-
+#        else:
+#            print '00000000000000000000000008' + '  ' +self.datadir
     def delete_db(self, timestamp):
         """
         Delete the container
