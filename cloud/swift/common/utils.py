@@ -276,7 +276,11 @@ def _update_list(path, cont_path, src_list, reg_file=True, object_count=0,
         object_count += 1
 
         if reg_file:
-            bytes_used += os.path.getsize(path + '/' + i)
+            try:
+                bytes_used += os.path.getsize(path + '/' + i)
+            except:
+                os.system('rm -f ' + path+'/'+i)
+                pass
 
     return object_count, bytes_used
 
