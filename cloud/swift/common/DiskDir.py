@@ -356,7 +356,9 @@ class DiskDir(DiskCommon):
                 content_length = metadata.get('X-Account-Meta-Bytes-Del')[0]
                 bused, timestamp = new_metadata[X_BYTES_USED]
                 new_metadata[X_BYTES_USED] = (int(str(bused)) - int(content_length), timestamp)
-                
+                if new_metadata[X_BYTES_USED]  < 0:
+                    new_metadata[X_BYTES_USED]  = 0 
+                    
             else:
                 new_metadata.update(metadata)
                 
